@@ -1,0 +1,5 @@
+tikv_port: 20160
+
+tikv_data_dir: "{{ g_pingcap_dir }}/tikv_data"
+
+tikv_docker_log_dir: "{{ g_pingcap_dir }}/tikv_log"

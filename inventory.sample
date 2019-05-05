@@ -1,0 +1,19 @@
+[all:vars]
+ansible_port=22
+ansible_user=root
+ansible_ssh_pass=PASSWORD
+
+[pd_servers]
+pd-1 ansible_ssh_host=192.168.133.41
+pd-2 ansible_ssh_host=192.168.133.42
+pd-3 ansible_ssh_host=192.168.133.43
+
+[tikv_servers]
+tikv-1 ansible_ssh_host=192.168.133.41
+tikv-2 ansible_ssh_host=192.168.133.42
+tikv-3 ansible_ssh_host=192.168.133.43
+
+[tidb_servers]
+tidb-1 ansible_ssh_host=192.168.133.41
+tidb-2 ansible_ssh_host=192.168.133.42
+tidb-3 ansible_ssh_host=192.168.133.43

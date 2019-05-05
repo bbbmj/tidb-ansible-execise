@@ -1,0 +1,19 @@
+- name: Create configuration file
+  template:
+    src: "tidb_config.toml.j2"
+    dest: "{{ tidb_config_path }}"
+    mode: "0644"
+
+- name: Create docker run script
+  template:
+    src: "tidb_docker.sh.j2"
+    dest: "{{ tidb_script_path }}"
+    mode: "0755"
+
+- name: Execute script
+  shell: "bash {{ tidb_script_path }}"
+  run_once: true
+  register: result
+  until: result is success
+  retries: 3
+  delay: 5

@@ -1,0 +1,15 @@
+pd_client_port: 2379
+
+pd_peer_port: 2380
+
+pd_name_prefix: "pd"
+
+pd_image_name: pingcap/pd:latest
+
+pd_config_path: "{{ g_pingcap_dir }}/pd_config.toml"
+
+pd_script_path: "{{ g_pingcap_dir }}/pd_docker.sh"
+
+pd_docker_log_dir: "{{ g_pingcap_dir }}/pd_log"
+
+pd_data_dir : "{{ g_pingcap_dir }}/pd_data"

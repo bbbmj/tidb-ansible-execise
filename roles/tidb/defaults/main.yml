@@ -1,0 +1,11 @@
+tidb_port: 4000
+
+tidb_status_port: 10080
+
+tidb_image_name: pingcap/tidb:latest
+
+tidb_config_path: "{{ g_pingcap_dir }}/tidb_config.toml"
+
+tidb_script_path: "{{ g_pingcap_dir }}/tidb_docker.sh"
+
+tidb_docker_log_dir: "{{ g_pingcap_dir }}/tidb_log"

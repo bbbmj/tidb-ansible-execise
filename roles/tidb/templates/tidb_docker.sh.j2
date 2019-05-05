@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+{% set peer_id = groups.tidb_servers.index(inventory_hostname) + 1 -%}
+
+{% set all_pd = [] -%}
+{% set pd_hosts = groups.pd_servers %}
+{% for host in pd_hosts -%}
+  {% set pd_ip = hostvars[host].ansible_host | default(hostvars[host].inventory_hostname) -%}
+  {% set pd_port = hostvars[host].pd_client_port -%}
+  {% set _ = all_pd.append("%s:%s" % (pd_ip, pd_port)) -%}
+{% endfor -%}
+
+exec docker run -d --name tidb{{ peer_id }} \
+  -p {{ tidb_port }}:4000 \
+  -p {{ tidb_status_port }}:10080 \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v "{{ tidb_config_path }}:/etc/tidb_config.toml:ro" \
+  -v "{{ tidb_docker_log_dir }}:/var/log" \
+  {{ tidb_image_name }} \
+  --store=tikv \
+  --path="{{ all_pd | join(',') }}" \
+  --config=/etc/tidb_config.toml

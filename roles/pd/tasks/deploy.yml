@@ -1,0 +1,19 @@
+- name: Create configuration file
+  template:
+    src: "pd_config.toml.j2"
+    dest: "{{ pd_config_path }}"
+    mode: 0644
+
+- name: Create docker start script
+  template:
+    src: "pd_docker.sh.j2"
+    dest: "{{ pd_script_path }}"
+    mode: 0755
+
+- name: Execute script
+  shell: "bash {{ pd_script_path }}"
+  run_once: true
+  register: result
+  until: result is success
+  retries: 3
+  delay: 5

@@ -1,0 +1,22 @@
+# Deploy TiDB cluster with Docker
+
+- name: Ensure interpreter does exist
+  import_playbook: common/interpreter.yml
+
+- name: Deploy pd cluster
+  hosts: pd_servers
+  any_errors_fatal: true
+  roles:
+    - pd
+
+- name: Deploy tikv cluster
+  hosts: tikv_servers
+  any_errors_fatal: true
+  roles:
+    - tikv
+
+- name: Deploy tidb cluster
+  hosts: tidb_servers
+  any_errors_fatal: true
+  roles:
+    - tidb

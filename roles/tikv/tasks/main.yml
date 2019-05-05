@@ -1,0 +1,11 @@
+- name: Ensure deploy dir exists
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ g_pingcap_dir }}"
+    - "{{ tikv_data_dir }}"
+    - "{{ tikv_docker_log_dir }}"
+
+- name: Install tikv with docker
+  include_tasks: deploy.yml

@@ -1,0 +1,4 @@
+tidb_port: 4000
+tidb_status_port: 10080
+
+tidb_docker_log_dir: "{{ g_pingcap_dir }}/tidb_log"

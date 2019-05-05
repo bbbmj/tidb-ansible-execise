@@ -1,0 +1,10 @@
+- name: Ensure deploy dir exists
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ g_pingcap_dir }}"
+    - "{{ tidb_docker_log_dir }}"
+
+- name: Install tidb with docker
+  include_tasks: deploy.yml

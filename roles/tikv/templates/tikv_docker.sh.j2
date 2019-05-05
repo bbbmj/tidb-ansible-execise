@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+
+{% set host_ip = hostvars[inventory_hostname].ansible_host | default(hostvars[inventory_hostname].inventory_hostname) -%}
+{% set peer_id = groups.tikv_servers.index(inventory_hostname) + 1 -%}
+
+{% set all_pd = [] -%}
+{% set pd_hosts = groups.pd_servers %}
+{% for host in pd_hosts -%}
+  {% set pd_ip = hostvars[host].ansible_host | default(hostvars[host].inventory_hostname) -%}
+  {% set pd_port = hostvars[host].pd_client_port -%}
+  {% set _ = all_pd.append("%s:%s" % (pd_ip, pd_port)) -%}
+{% endfor -%}
+
+exec docker run -d --name tikv{{ peer_id }} \
+  -p 20160:20160 \
+  --ulimit nofile=1000000:1000000 \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v "{{ tikv_config_path }}:/etc/tikv.toml:ro" \
+  -v "{{ tikv_data_dir }}:/data" \
+  -v "{{ tikv_docker_log_dir }}:/var/log" \
+  {{ tikv_image_name }} \
+  --addr="0.0.0.0:20160" \
+  --advertise-addr="{{ host_ip }}:{{ tikv_port }}" \
+  --data-dir="/data" \
+  --log-file="/var/log" \
+  --pd={{ all_pd | join(',') }} \
+  --config=/etc/tikv.toml

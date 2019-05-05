@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+
+{% set host_ip = hostvars[inventory_hostname].ansible_host | default(hostvars[inventory_hostname].inventory_hostname) -%}
+{% set peer_id = groups.pd_servers.index(inventory_hostname) + 1 -%}
+
+{% set all_pd = [] -%}
+{% for host in groups.pd_servers -%}
+  {% set other_ip = hostvars[host].ansible_host | default(hostvars[host].inventory_hostname) -%}
+  {% set other_port = hostvars[host]['pd_peer_port'] -%}
+  {% set other_pd_name_surfix = groups.pd_servers.index(host) + 1 -%}
+  {% set other_pd_name = pd_name_prefix ~ other_pd_name_surfix -%}
+  {% set _ = all_pd.append("%s=http://%s:%s" % (other_pd_name, other_ip, other_port)) -%}
+{% endfor -%}
+
+exec docker run -d --name "{{ pd_name_prefix }}{{ peer_id }}" \
+  -p {{ pd_client_port }}:2379 \
+  -p {{ pd_peer_port }}:2380 \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v "{{ pd_data_dir }}:/data" \
+  -v "{{ pd_config_path }}":/etc/pd_config.toml \
+  -v "{{ pd_docker_log_dir }}:/var/log" \
+  "{{ pd_image_name }}" \
+  --name="{{ pd_name_prefix }}{{ peer_id }}" \
+  --data-dir="/data" \
+  --client-urls="http://0.0.0.0:2379" \
+  --advertise-client-urls="http://{{ host_ip }}:2379" \
+  --peer-urls="http://0.0.0.0:2380" \
+  --advertise-peer-urls="http://{{ host_ip }}:2380" \
+  --config=/etc/pd_config.toml \
+  --initial-cluster="{{ all_pd | join(',') }}"

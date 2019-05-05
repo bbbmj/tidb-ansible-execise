@@ -1,0 +1,19 @@
+- name: Create configuration file
+  template:
+    src: "tikv_config.toml.j2"
+    dest: "{{ tikv_config_path }}"
+    mode: "0644"
+
+- name: create docker run script
+  template:
+    src: "tikv_docker.sh.j2"
+    dest: "{{ tikv_script_path }}"
+    mode: "0755"
+
+- name: Execute script
+  shell: "bash {{ tikv_script_path }}"
+  run_once: true
+  register: result
+  until: result is success
+  retries: 3
+  delay: 5

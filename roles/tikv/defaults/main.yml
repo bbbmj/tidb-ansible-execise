@@ -1,0 +1,13 @@
+tikv_port: 20160
+
+tikv_status_port: 20180
+
+tikv_config_path: "{{ g_pingcap_dir }}/tikv_config.toml"
+
+tikv_script_path: "{{ g_pingcap_dir }}/tikv_docker.sh"
+
+tikv_data_dir: "{{ g_pingcap_dir }}/tikv_data"
+
+tikv_image_name: pingcap/tikv:latest
+
+tikv_docker_log_dir: "{{ g_pingcap_dir }}/tikv_log"

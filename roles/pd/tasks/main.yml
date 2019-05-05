@@ -1,0 +1,11 @@
+- name: Ensure deploy dir exists
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ g_pingcap_dir }}"
+    - "{{ pd_docker_log_dir }}"
+    - "{{ pd_data_dir }}"
+
+- name: Install pd with docker
+  include_tasks: deploy.yml
